@@ -1,0 +1,104 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudMainContent Class="mt-16 pa-4">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private bool _drawerOpen = true;
+    private bool _isDarkMode = true;
+    private MudTheme? _theme = null;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _theme = new()
+            {
+                PaletteLight = _lightPalette, // Set the light palette
+                PaletteDark = _darkPalette, // Set the dark palette
+                LayoutProperties = new LayoutProperties()
+            };
+    }
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void DarkModeToggle()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+    // Light Palette Configuration
+    private readonly PaletteLight _lightPalette = new()
+        {
+            Black = "#1D1D1D", // Dark football-inspired black
+            AppbarText = "#2E3B55", // Slightly darker blue/gray for the Appbar text
+            AppbarBackground = "#F5F5F5", // Light, neutral stadium background
+            DrawerBackground = "#FFFFFF", // Clean white drawer background
+            GrayLight = "#D3D3D3", // Lighter gray, reminiscent of concrete stadium structures
+            GrayLighter = "#E8E8E8", // Even lighter for softer accents
+            Primary = "#3B7D3E", // Grassy green, symbolic of football fields
+            Secondary = "#D2691E", // A brown shade like a football
+            Info = "#4A86FF", // Keep a blue for contrast
+            Success = "#4CAF50", // Green for success messages
+            Warning = "#FFB74D", // Orange/yellow for warning indicators
+            Error = "#F44336" // Red for errors
+        };
+
+
+    // Dark Palette Configuration
+    private readonly PaletteDark _darkPalette = new()
+        {
+            Primary = "#4CAF50", // Football field green as a prominent primary color
+            Surface = "#1C1C1C", // Dark surface for a night-game vibe
+            Background = "#121212", // Dark background for contrast
+            BackgroundGray = "#1F1F1F", // Slightly lighter gray for background elements
+            AppbarText = "#B2B2B2", // Light gray for text on the Appbar
+            AppbarBackground = "#333333", // Dark but not black for the Appbar background
+            DrawerBackground = "#262626", // Deep gray drawer background
+            ActionDefault = "#4CAF50", // Highlighted actions with green
+            ActionDisabled = "#616161", // Muted gray for disabled actions
+            TextPrimary = "#E0E0E0", // Light text on a dark background
+            TextSecondary = "#B2B2B2", // Slightly darker for secondary text
+            DrawerIcon = "#A5A5A5", // Soft gray for drawer icons
+            DrawerText = "#B2B2B2", // Matching drawer text color
+            GrayLight = "#2A2A2A", // Darker gray for contrast on surfaces
+            GrayLighter = "#1C1C1C", // Even darker for less important areas
+            Info = "#4A86FF", // Keep blue for information
+            Success = "#3DCC6C", // Green for success
+            Warning = "#FFC107", // Yellow-orange for warnings
+            Error = "#F44336", // Red for errors
+            LinesDefault = "#393939", // Dark lines for tables, dividers
+            TableLines = "#424242", // Slightly lighter for table dividers
+            Divider = "#444444", // Divider line color
+            OverlayLight = "#1E1E1E80", // Transparent dark overlay for modals
+        };
+
+
+    public string DarkLightModeButtonIcon => _isDarkMode switch
+    {
+        true => Icons.Material.Rounded.AutoMode,
+        false => Icons.Material.Outlined.DarkMode,
+    };
+}
