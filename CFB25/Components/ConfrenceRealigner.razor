@@ -1,0 +1,97 @@
+﻿
+<button class="realign-button" @onclick="RealignTeams">Realign Teams</button>
+
+<div class="conference-realigner-container">
+    @foreach (var conference in conferences)
+    {
+        <div class="conference-card" style="border-color: @conference.OutlineColor">
+            <img class="conference-logo" src="@GetConferenceImagePath(conference.Id)" alt="@conference.Name Logo" />
+            <div class="teams-section">
+                @foreach (var team in conference.Teams)
+                {
+                    <img class="team-logo" src="@GetTeamImagePath(team)" alt="Team Logo" />
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private const int TotalTeams = 134;
+    private const int TotalConferences = 11;
+    private const int MaxTeamsPerConference = 16; // Maximum number of teams per conference
+
+    private List<Conference> conferences = new List<Conference>();
+
+    protected override void OnInitialized()
+    {
+        InitializeConferences();
+        RealignTeams();
+    }
+
+    private void InitializeConferences()
+    {
+        conferences = new List<Conference>
+        {
+            new Conference { Id = 1, Name = "American", OutlineColor = "#0033A0" },
+            new Conference { Id = 2, Name = "ACC", OutlineColor = "#003C71" },
+            new Conference { Id = 3, Name = "BIG 10", OutlineColor = "#00274D" },
+            new Conference { Id = 4, Name = "BIG 12", OutlineColor = "#C8102E" },
+            new Conference { Id = 5, Name = "Conference USA", OutlineColor = "#0033A0" },
+            new Conference { Id = 6, Name = "Independent", OutlineColor = "#D7A52C", MaxTeams = MaxTeamsPerConference },
+            new Conference { Id = 7, Name = "MAC", OutlineColor = "#003A70" },
+            new Conference { Id = 8, Name = "Mountain West", OutlineColor = "#003C71" },
+            new Conference { Id = 9, Name = "PAC 12", OutlineColor = "#8C8D8E" },
+            new Conference { Id = 10, Name = "SEC", OutlineColor = "#14B4D7" },
+            new Conference { Id = 11, Name = "Sun Belt Conference", OutlineColor = "#FFB81C" }
+        };
+    }
+
+    private void RealignTeams()
+    {
+        var random = new Random();
+        var teamList = Enumerable.Range(1, TotalTeams).OrderBy(x => random.Next()).ToList();
+
+        foreach (var conference in conferences)
+        {
+            conference.Teams.Clear();
+        }
+
+        teamList = teamList.OrderBy(x => random.Next()).ToList();
+
+        foreach (var team in teamList)
+        {
+            var availableConferences = conferences.Where(c => c.Teams.Count < MaxTeamsPerConference).ToList();
+
+            if (availableConferences.Count == 0)
+            {
+                Console.WriteLine("No available conferences for team assignment.");
+                break;
+            }
+
+            var selectedConference = availableConferences[random.Next(availableConferences.Count)];
+
+            selectedConference.Teams.Add(team);
+        }
+    }
+
+
+    private string GetTeamImagePath(int teamId)
+    {
+        return $"/TeamLogos/{teamId}.png";
+    }
+
+    private string GetConferenceImagePath(int conferenceId)
+    {
+        return $"/Conferences/{conferenceId}.png";
+    }
+
+    public class Conference
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string OutlineColor { get; set; }
+        public int MaxTeams { get; set; } = int.MaxValue; // Default to no limit
+        public List<int> Teams { get; set; } = new List<int>();
+    }
+}
