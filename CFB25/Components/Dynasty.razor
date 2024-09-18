@@ -1,0 +1,158 @@
+﻿@page "/dynasty"
+
+<div class="dynasty-container">
+    <h3 class="dynasty-title">Dynasty Mode</h3>
+
+    <!-- Team and Conference Section -->
+    <div class="team-conference-section">
+        <div class="team-section">
+            <img class="team-logo" src="@GetTeamImagePath()" alt="Team Logo" />
+        </div>
+        <div>
+            <h1>-></h1>
+        </div>
+        <div class="conference-section">
+            <img class="conference-logo" src="@GetConferenceImagePath()" alt="Conference Logo" />
+        </div>
+    </div>
+
+    <!-- Challenges and Years Section -->
+    <div class="challenges-years-section">
+        <div class="challenge-section">
+            <h4 class="challenge-text">Challenges</h4>
+            <ul class="challenge-list">
+                @foreach (var challenge in selectedChallenges)
+                {
+                    <li>@challenge</li>
+                }
+            </ul>
+            <button class="add-challenge-button" @onclick="AddChallenge" disabled="@DisableAddChallenge">Add Challenge</button>
+        </div>
+
+        <div class="years-section">
+            <h4 class="years-text">In: @yearsToComplete Years</h4>
+        </div>
+    </div>
+
+    <!-- Respin Buttons -->
+    <div class="respin-buttons">
+        <button class="respin-button" @onclick="RespinTeam">Respin Team</button>
+        <button class="respin-button" @onclick="RespinChallenges">Respin Challenges</button>
+        <button class="respin-button" @onclick="RespinYears">Respin Years</button>
+        <button class="respin-button" @onclick="RespinConference">Respin Conference</button>
+    </div>
+</div>
+
+@code {
+    private int teamImage;
+    private int conferenceImage;
+    private List<string> selectedChallenges = new List<string>();
+    private int maxChallenges = 5;
+    private int yearsToComplete;
+
+    private string[] conferenceNames = {
+        "American", "ACC", "BIG 10", "BIG 12", "Conference USA",
+        "Independent", "MAC", "Mountain West", "PAC 12", "SEC", "Sun Belt Conference"
+    };
+
+    private List<string> challenges = new List<string>
+{
+    "Recruit a 5-star quarterback.",
+    "Win your conference championship.",
+    "Lead the nation in passing yards.",
+    "Go undefeated in the regular season.",
+    "Reach the College Football Playoff.",
+    "Win a rivalry game by 21+ points.",
+    "Sign a top-10 recruiting class.",
+    "Get a defensive player to win the Heisman Trophy.",
+    "Upgrade your stadium facilities.",
+    "Get promoted to a better conference.",
+    "Secure a national #1 ranking by Week 8.",
+    "Finish in the top 10 for 3 consecutive seasons.",
+    "Win a bowl game.",
+    "Lead the nation in defensive interceptions.",
+    "Recruit the #1 ranked athlete in the country.",
+    "Finish with the #1 recruiting class in the nation.",
+    "Develop a 3-star recruit into an All-American.",
+    "Win 3 consecutive national championships.",
+    "Host and win College Gameday at home.",
+    "Schedule and win against a top 5 non-conference opponent.",
+    "Lead the nation in total offense.",
+    "Win the Heisman Trophy with a running back.",
+    "Sign a JUCO player and turn them into a starter.",
+    "Lead the conference in sacks for 2 consecutive seasons.",
+    "Beat all your rivals in one season.",
+    "Recruit a player ranked in the top 5 nationally at their position.",
+    "Achieve a perfect recruiting class with no 3-star players.",
+    "Get 3 different players to win conference player of the week awards in the same season.",
+    "Finish in the top 3 for the best defense in the country.",
+    "Develop a freshman into a first-round draft pick in 3 years.",
+    "Win a bowl game with a team rated under 85 overall.",
+    "Have a quarterback with 40+ touchdowns and fewer than 5 interceptions.",
+    "Run for over 3,000 yards as a team in a single season.",
+    "Recruit a transfer player and make them a Heisman finalist.",
+    "Win every home game for 3 consecutive seasons.",
+    "Have a punter or kicker win a national award.",
+    "Lead the nation in special teams touchdowns.",
+    "Win the National Coach of the Year award."
+};
+
+
+    protected override void OnInitialized()
+    {
+        RespinTeam();
+        RespinConference();
+        RespinChallenges();
+        RespinYears();
+    }
+
+    private void RespinTeam()
+    {
+        var random = new Random();
+        teamImage = random.Next(1, 135);
+    }
+
+    private void RespinConference()
+    {
+        var random = new Random();
+        conferenceImage = random.Next(1, 12);
+    }
+
+    private void RespinChallenges()
+    {
+        selectedChallenges.Clear();
+        AddChallenge();
+    }
+
+    private void AddChallenge()
+    {
+        if (selectedChallenges.Count < maxChallenges)
+        {
+            var random = new Random();
+            string newChallenge = challenges[random.Next(challenges.Count)];
+
+            if (!selectedChallenges.Contains(newChallenge))
+            {
+                selectedChallenges.Add(newChallenge);
+            }
+        }
+    }
+
+    private void RespinYears()
+    {
+        var random = new Random();
+        yearsToComplete = random.Next(3, 9);
+    }
+
+    private bool DisableAddChallenge => selectedChallenges.Count >= maxChallenges;
+
+    private string GetTeamImagePath()
+    {
+        return $"/TeamLogos/{teamImage}.png";
+    }
+
+    private string GetConferenceImagePath()
+    {
+        return $"/Conferences/{conferenceImage}.png";
+    }
+}
